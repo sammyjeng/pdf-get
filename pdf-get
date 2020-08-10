@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+
+
 import requests
-from requests import get
 from bs4 import BeautifulSoup
 import sys
 import shutil
 import wget
 import signal
+
 
 class Library(object):
     def __init__(self, query):
@@ -28,9 +30,9 @@ class Library(object):
                 t = BeautifulSoup(str(td_list[2]).split("<font")[0]+"</a></td>", "html.parser")
 
                 mirrors = []
-                for i in range(9,13):
+                for i in range(9, 13):
                     mirrors.append(td_list[i].a.get("href"))
-                
+
                 item["title"] = t.a.text
                 item["url"] = t.a.get("href")
                 item["year"] = int(td_list[4].text)
@@ -44,7 +46,7 @@ class Library(object):
                     results.append(item)
 
             except Exception as e:
-                pass
+                print(e)
             else:
                 pass
 
@@ -55,7 +57,7 @@ class Library(object):
             chosen_id = int(input("ID >> "))
             item = results[chosen_id]
             id = item["url"].split("?md5=")[1]
-            url = "http://libgen.io/ads.php?md5=" + id
+            url = "http://libgen.is/ads.php?md5=" + id
             filename = item["title"][0:-1] + "." + item["extension"]
         except Exception:
             print("Something went wrong. Is it you?")
@@ -64,7 +66,7 @@ class Library(object):
         print("Locating Download URL...")
         try:
             soup = BeautifulSoup(requests.get(url).text, "html.parser")
-            download_url = soup.find_all("a")[1].get("href")
+            download_url = soup.find_all("a")[0].get("href")
         except Exception as e:
             print("Location failed. Is it blocked?")
             print(e)
@@ -76,7 +78,7 @@ class Library(object):
     def print_results(self, results):
 
         def separator(length):
-            for i in range(0,length):
+            for i in range(0, length):
                 sys.stdout.write("-")
                 sys.stdout.flush()
             print("")
@@ -100,6 +102,7 @@ class Library(object):
         else:
             print("No results.")
 
+
 if __name__ == '__main__':
     width = (shutil.get_terminal_size().columns)
     query = " ".join(sys.argv[1:])
@@ -107,9 +110,7 @@ if __name__ == '__main__':
     def signal_handler(signal, frame):
         print('\nQuitting...')
         sys.exit(0)
-
     signal.signal(signal.SIGINT, signal_handler)
-
 
     def help():
         print("")
