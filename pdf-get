@@ -46,7 +46,7 @@ class Library(object):
                     results.append(item)
 
             except Exception as e:
-                print(e)
+                pass
             else:
                 pass
 
